@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,10 +21,14 @@ namespace EndGame.DataAccess.Entities
         [Required]
         public string LastName { get; set; }
 
-        //[Required]
-        public string ProfilePic { get; set; }
-
         [NotMapped]
         public string FullName => this.FirstName + " " + this.LastName;
+
+        public string ProfilePic { get; set; }
+
+        public IList<UserRole> Roles { get; set; } = new List<UserRole>();
+
+        [ForeignKey("AuthorId")]
+        public IList<Review> Reviews { get; set; }
     }
 }

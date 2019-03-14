@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace EndGame.DataAccess.Entities
 {
@@ -12,8 +10,13 @@ namespace EndGame.DataAccess.Entities
         [Required]
         public string Title { get; set; }
 
-        public string Description { get; set; }
+        public int ReviewId { get; set; }
+        public Review Review { get; set; }
 
         public IList<GameImage> Images { get; set; } = new List<GameImage>();
+
+        public IList<GamePlatform> Platforms { get; set; } = new List<GamePlatform>();
+
+        public IList<GameGenre> Genres { get; set; } = new List<GameGenre>();
     }
 }

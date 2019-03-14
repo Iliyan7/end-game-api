@@ -30,11 +30,11 @@ namespace EndGame.Api.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register(RegisterRequestModel model)
         {
-            var result = await _usersService.RegisterAsync(model);
+            var result = await _usersService.CreateAsync(model);
 
             if(!result)
             {
-                return BadRequest("This Email already exists");
+                return BadRequest("This Email already exists.");
             }
 
             return Ok();
@@ -42,10 +42,18 @@ namespace EndGame.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public ActionResult Login([FromBody]LoginRequestModel model)
+        public async Task<ActionResult> LoginAsync([FromBody]LoginRequestModel model)
         {
+            var result = await _usersService.PasswordSignInAsync(model.Email, model.Password);
+
+            if(!result)
+            {
+                return Unauthorized("Login attemp failed.");
+            }
+
             var token = GenerateToken();
-            return Ok(token);
+
+            return Ok(new { token });
         }
 
         private string GenerateToken()

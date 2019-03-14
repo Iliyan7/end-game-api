@@ -5,6 +5,9 @@ namespace EndGame.Services.Interfaces
 {
     public interface IUsersService
     {
-        Task<bool> RegisterAsync(RegisterRequestModel model);
+        Task<bool> CreateAsync(RegisterRequestModel model);
+        Task<bool> PasswordSignInAsync(string email, string password);
+
+        void AddToSubscribers(SubscribeRequestModel model);
     }
 }
