@@ -1,14 +1,9 @@
-﻿using EndGame.Models;
+﻿using EndGame.Api.TokenProviders.Contracts;
+using EndGame.DataAccess.Entities;
+using EndGame.Models.UserRequests;
 using EndGame.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EndGame.Api.Controllers
@@ -18,21 +13,21 @@ namespace EndGame.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUsersService _usersService;
-        private readonly IConfiguration _configuration;
+        private readonly ITokenProvider _tokenProvider;
 
-        public AuthController(IUsersService usersService, IConfiguration configuration)
+        public AuthController(IUsersService usersService, ITokenProvider tokenProvider)
         {
             _usersService = usersService;
-            _configuration = configuration;
+            _tokenProvider = tokenProvider;
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult> Register(RegisterRequestModel model)
+        public async Task<ActionResult> Register(RegisterReqModel model)
         {
             var result = await _usersService.CreateAsync(model);
 
-            if(!result)
+            if(!result.Succeeded)
             {
                 return BadRequest("This Email already exists.");
             }
@@ -42,36 +37,20 @@ namespace EndGame.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult> LoginAsync([FromBody]LoginRequestModel model)
+        public async Task<ActionResult> Login(LoginReqModel model)
         {
             var result = await _usersService.PasswordSignInAsync(model.Email, model.Password);
 
-            if(!result)
+            if (!result.Succeeded)
             {
                 return Unauthorized("Login attemp failed.");
             }
 
-            var token = GenerateToken();
+            var user = (User)result.Data;
 
-            return Ok(new { token });
-        }
+            var accessToken = _tokenProvider.GenerateToken(user.Id, user.Email, new string[] { "Admin" });
 
-        private string GenerateToken()
-        {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["IssuerSigningKey"]));
-            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-            var tokeOptions = new JwtSecurityToken(
-                issuer: "http://localhost:5000",
-                audience: "http://localhost:5000",
-                claims: new List<Claim>(),
-                expires: DateTime.Now.AddMinutes(5),
-                signingCredentials: signinCredentials
-            );
-
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-
-            return tokenString;
+            return Ok(new { accessToken });
         }
     }
 }

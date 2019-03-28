@@ -1,12 +1,10 @@
 ﻿using EndGame.Api.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using EndGame.Shared.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace EndGame.Api
 {
@@ -22,6 +20,9 @@ namespace EndGame.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ConnectionStringsOptions>(Configuration.GetSection("ConnectionStrings"));
+            services.Configure<TokenProviderOptions>(Configuration.GetSection("TokenProvider"));
+
             services.ConfigureDbContext(Configuration);
 
             services.ConfigureCors();
@@ -39,23 +40,18 @@ namespace EndGame.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
             }
             else
             {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.ConfigureCustomExceptionMiddleware();
                 app.UseHsts();
             }
 
-            app.ConfigureCustomExceptionMiddleware();
-
             app.UseHttpsRedirection();
-
-            app.UseCors("CorsPolicy");
-
             app.UseStaticFiles();
-
+            app.UseCors("CorsPolicy");
             app.UseAuthentication();
-
             app.UseMvc();
         }
     }

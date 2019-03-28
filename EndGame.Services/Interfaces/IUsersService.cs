@@ -1,13 +1,15 @@
-﻿using EndGame.Models;
+﻿using EndGame.Models.UserRequests;
+using EndGame.Services.Results;
 using System.Threading.Tasks;
 
 namespace EndGame.Services.Interfaces
 {
     public interface IUsersService
     {
-        Task<bool> CreateAsync(RegisterRequestModel model);
-        Task<bool> PasswordSignInAsync(string email, string password);
+        Task<ServiceResult> CreateAsync(RegisterReqModel model);
 
-        void AddToSubscribers(SubscribeRequestModel model);
+        Task<ServiceResult> PasswordSignInAsync(string email, string password);
+
+        void AddToSubscribers(SubscribeReqModel model);
     }
 }

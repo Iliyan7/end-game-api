@@ -29,6 +29,6 @@ namespace EndGame.DataAccess.Entities
         public IList<UserRole> Roles { get; set; } = new List<UserRole>();
 
         [ForeignKey("AuthorId")]
-        public IList<Review> Reviews { get; set; }
+        public IList<Review> Reviews { get; set; } = new List<Review>();
     }
 }

@@ -1,8 +1,8 @@
 ﻿using EndGame.DataAccess.Entities;
 
-namespace EndGame.Models
+namespace EndGame.Models.UserRequests
 {
-    public class RegisterRequestModel
+    public class RegisterReqModel
     {
         public string Email { get; set; }
 

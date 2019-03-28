@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EndGame.Models
+namespace EndGame.Models.UserRequests
 {
-    public class SubscribeRequestModel
+    public class SubscribeReqModel
     {
         [Required]
         [DataType(DataType.EmailAddress)]

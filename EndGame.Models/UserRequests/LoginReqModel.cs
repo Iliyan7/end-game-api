@@ -1,6 +1,6 @@
-﻿namespace EndGame.Models
+﻿namespace EndGame.Models.UserRequests
 {
-    public class LoginRequestModel
+    public class LoginReqModel
     {
         public string Email { get; set; }
 

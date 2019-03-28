@@ -1,4 +1,6 @@
-﻿using EndGame.DataAccess;
+﻿using EndGame.Api.TokenProviders;
+using EndGame.Api.TokenProviders.Contracts;
+using EndGame.DataAccess;
 using EndGame.Services;
 using EndGame.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,23 +18,24 @@ namespace EndGame.Api.Extensions
         {
             var connectionString = config.GetConnectionString("EndGame");
             services.AddDbContext<EndGameContext>(o => o.UseSqlServer(connectionString));
-
         }
+
         public static void ConfigureCors(this IServiceCollection services)
         {
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy", builder =>
-                    builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                {
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials().Build();
+                });
             });
         }
 
         public static void AddJwtBearerAuth(this IServiceCollection services, IConfiguration config)
         {
-            var secretKey = config["IssuerSigningKey"];
+            var issuer = config["TokenProvider:Issuer"];
+            var audience = config["TokenProvider:Audience"];
+            var issuerSigningKey = config["TokenProvider:IssuerSigningKey"];
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -44,9 +47,9 @@ namespace EndGame.Api.Extensions
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
 
-                        ValidIssuer = "http://localhost:5000",
-                        ValidAudience = "http://localhost:5000",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                        ValidIssuer = issuer,
+                        ValidAudience = audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(issuerSigningKey))
                     };
                 });
         }
@@ -55,6 +58,8 @@ namespace EndGame.Api.Extensions
         {
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IGamesService, GamesService>();
+
+            services.AddSingleton<ITokenProvider, JwtTokenProvider>();
         }
     }
 }

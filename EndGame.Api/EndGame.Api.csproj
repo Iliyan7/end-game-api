@@ -8,12 +8,14 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EndGame.DataAccess\EndGame.DataAccess.csproj" />
     <ProjectReference Include="..\EndGame.Models\EndGame.Models.csproj" />
     <ProjectReference Include="..\EndGame.Services\EndGame.Services.csproj" />
+    <ProjectReference Include="..\EndGame.Shared\EndGame.Shared.csproj" />
   </ItemGroup>
 
 </Project>

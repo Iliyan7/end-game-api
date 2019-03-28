@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 
 namespace EndGame.Api.Extensions
 {
-    public static class ExceptionMiddlewareExtensions
+    public static class ApplicationBuilderExtensions
     {
         public static IApplicationBuilder ConfigureCustomExceptionMiddleware(this IApplicationBuilder builder)
         {

@@ -34,13 +34,13 @@ namespace EndGame.DataAccess
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Subscriber>()
-               .HasIndex(u => u.Email)
-               .IsUnique();
-
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<Subscriber>()
+               .HasIndex(u => u.Email)
+               .IsUnique();
 
             modelBuilder.Entity<GameGenre>()
                .HasKey(gg => new { gg.GameId, gg.GenreId });
