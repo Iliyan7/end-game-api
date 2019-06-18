@@ -20,23 +20,16 @@ namespace EndGame.Api.TokenProviders
             _tokenProviderAccessor = tokenProviderAccessor.CurrentValue;
         }
 
-        public string GenerateToken(int id, string email, string[] roles)
+        public string GenerateToken(IEnumerable<Claim> claims)
         {
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenProviderAccessor.IssuerSigningKey));
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, id.ToString()),
-                new Claim(ClaimTypes.Email, email),
-            };
-
-            claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
             var tokeOptions = new JwtSecurityToken(
                 issuer: _tokenProviderAccessor.Issuer,
                 audience: _tokenProviderAccessor.Audience,
                 claims: claims,
+                notBefore: DateTime.Now,
                 expires: DateTime.Now.AddMinutes(_tokenProviderAccessor.Expires),
                 signingCredentials: signinCredentials
             );

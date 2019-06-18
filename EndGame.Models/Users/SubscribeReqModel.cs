@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EndGame.Models.UserRequests
+namespace EndGame.Models.Users
 {
     public class SubscribeReqModel
     {
         [Required]
-        [DataType(DataType.EmailAddress)]
+        [EmailAddress]
         public string Email { get; set; }
     }
 }

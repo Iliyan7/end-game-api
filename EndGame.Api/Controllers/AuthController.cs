@@ -1,7 +1,6 @@
 ﻿using EndGame.Api.TokenProviders.Contracts;
-using EndGame.DataAccess.Entities;
-using EndGame.Models.UserRequests;
-using EndGame.Services.Interfaces;
+using EndGame.Models.Auth;
+using EndGame.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -27,12 +26,12 @@ namespace EndGame.Api.Controllers
         {
             var result = await _usersService.CreateAsync(model);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
-                return BadRequest("This Email already exists.");
+                return StatusCode(result.StatusCode, result.Errors);
             }
 
-            return Ok();
+            return NoContent();
         }
 
         [AllowAnonymous]
@@ -43,12 +42,10 @@ namespace EndGame.Api.Controllers
 
             if (!result.Succeeded)
             {
-                return Unauthorized("Login attemp failed.");
+                return StatusCode(result.StatusCode, result.Errors);
             }
 
-            var user = (User)result.Data;
-
-            var accessToken = _tokenProvider.GenerateToken(user.Id, user.Email, new string[] { "Admin" });
+            var accessToken = _tokenProvider.GenerateToken(result.Data.Claims);
 
             return Ok(new { accessToken });
         }

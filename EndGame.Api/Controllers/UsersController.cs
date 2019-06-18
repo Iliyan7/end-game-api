@@ -1,5 +1,5 @@
-﻿using EndGame.Models.UserRequests;
-using EndGame.Services.Interfaces;
+﻿using EndGame.Models.Users;
+using EndGame.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,11 +7,11 @@ namespace EndGame.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IUsersService _usersService;
 
-        public UserController(IUsersService usersService)
+        public UsersController(IUsersService usersService)
         {
             _usersService = usersService;
         }
@@ -20,7 +20,7 @@ namespace EndGame.Api.Controllers
         [HttpPost("subscribe")]
         public ActionResult Subscribe(SubscribeReqModel model)
         {
-            _usersService.AddToSubscribers(model);
+            _usersService.AddToSubscribersAsync(model.Email);
 
             return Accepted();
         }

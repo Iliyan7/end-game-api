@@ -1,8 +1,10 @@
 ﻿using EndGame.Api.Extensions;
 using EndGame.Shared.Options;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +25,9 @@ namespace EndGame.Api
             services.Configure<ConnectionStringsOptions>(Configuration.GetSection("ConnectionStrings"));
             services.Configure<TokenProviderOptions>(Configuration.GetSection("TokenProvider"));
 
-            services.ConfigureDbContext(Configuration);
+            services.AddSwaggerDocumentation();
+
+            services.ConfigureDbContext(Configuration.GetConnectionString("EndGame"));
 
             services.ConfigureCors();
 
@@ -31,7 +35,11 @@ namespace EndGame.Api
 
             services.AddCustomServices();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +49,7 @@ namespace EndGame.Api
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
+                app.UseSwaggerDocumentation();
             }
             else
             {
@@ -48,7 +57,7 @@ namespace EndGame.Api
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCors("CorsPolicy");
             app.UseAuthentication();

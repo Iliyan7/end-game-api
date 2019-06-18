@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EndGame.Constants\EndGame.Constants.csproj" />
     <ProjectReference Include="..\EndGame.DataAccess\EndGame.DataAccess.csproj" />
     <ProjectReference Include="..\EndGame.Models\EndGame.Models.csproj" />
   </ItemGroup>

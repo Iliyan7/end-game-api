@@ -1,28 +1,32 @@
 ﻿using CryptoHelper;
+using EndGame.Constants;
+using EndGame.Constants.ErrorMessages;
 using EndGame.DataAccess;
 using EndGame.DataAccess.Entities;
-using EndGame.Models.UserRequests;
-using EndGame.Services.Interfaces;
+using EndGame.Models.Auth;
+using EndGame.Models.Users;
+using EndGame.Services.Contracts;
 using EndGame.Services.Results;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EndGame.Services
 {
-    public class UsersService : IUsersService
+    public class UsersService : BaseService, IUsersService
     {
-        private readonly EndGameContext _db;
-
-        public UsersService(EndGameContext db)
+        public UsersService(EndGameContext db) : base(db)
         {
-            this._db = db;
         }
+
+        private IQueryable<User> Users => _db.Users;
 
         public async Task<ServiceResult> CreateAsync(RegisterReqModel model)
         {
-            if (await _db.Users.AnyAsync(u => u.Email == model.Email))
+            if (await Users.AnyAsync(u => u.Email == model.Email))
             {
-                return ServiceResult.Failed();
+                return ServiceResult.Failed(BadRequest.StatusCode, new ResultError(BadRequest.EmailAlreadyExists));
             }
 
             var hashedPassword = Crypto.HashPassword(model.Password);
@@ -31,42 +35,62 @@ namespace EndGame.Services
             await _db.Users.AddAsync(user);
             await _db.SaveChangesAsync();
 
-            return ServiceResult.Success(user);
+            return ServiceResult.Success();
         }
 
-        public async Task<ServiceResult> PasswordSignInAsync(string email, string password)
+        public async Task<ServiceResult<ClaimsIdentity>> PasswordSignInAsync(string email, string password)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email.Equals(email));
+            var user = await Users.FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
             {
-                return ServiceResult.Failed();
+                return ServiceResult<ClaimsIdentity>.Failed(Unauthorized.StatusCode, new ResultError(Unauthorized.InvalidLogin));
             }
 
             var hashedPassword = Crypto.HashPassword(password);
 
             if (!Crypto.VerifyHashedPassword(hashedPassword, password))
             {
-                return ServiceResult.Failed();
+                return ServiceResult<ClaimsIdentity>.Failed(Unauthorized.StatusCode, new ResultError(Unauthorized.InvalidLogin));
             }
 
-            return ServiceResult.Success(user);
+            return ServiceResult<ClaimsIdentity>.Success(this.GenerateClaims(user));
         }
 
         // TODO: should lock context
-        public async void AddToSubscribers(SubscribeReqModel model)
+        public async Task<ServiceResult> AddToSubscribersAsync(string email)
         {
-            if (await _db.Subscribers.AnyAsync(s => s.Email == model.Email))
+            if (await _db.Subscribers.AnyAsync(s => s.Email == email))
             {
-                return;
+                return ServiceResult.Failed(BadRequest.StatusCode, new ResultError(BadRequest.EmailAlreadySubscribed));
             }
 
             await _db.Subscribers.AddAsync(new Subscriber()
             {
-                Email = model.Email
+                Email = email
             });
 
             await _db.SaveChangesAsync();
+
+            return ServiceResult.Success();
+        }
+
+        private ClaimsIdentity GenerateClaims(User user)
+        {
+            var userId = user.Id.ToString();
+            var email = user.Email;
+            var firstName = user.FirstName;
+            var lastName = user.LastName;
+            var roles = user.Roles.Select(r => r.Role.Name).ToList();
+
+            var id = new ClaimsIdentity("EndGame.Application", EndGameClaimTypes.Email, EndGameClaimTypes.Role);
+            id.AddClaim(new Claim(EndGameClaimTypes.Id, userId));
+            id.AddClaim(new Claim(EndGameClaimTypes.Email, email));
+            id.AddClaim(new Claim(EndGameClaimTypes.FirstName, firstName));
+            id.AddClaim(new Claim(EndGameClaimTypes.LastName, lastName));
+            roles.ForEach(role => id.AddClaim(new Claim(EndGameClaimTypes.Role, role)));
+           
+            return id;
         }
     }
 }

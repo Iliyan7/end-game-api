@@ -1,7 +1,10 @@
-﻿namespace EndGame.Api.TokenProviders.Contracts
+﻿using System.Collections.Generic;
+using System.Security.Claims;
+
+namespace EndGame.Api.TokenProviders.Contracts
 {
     public interface ITokenProvider
     {
-        string GenerateToken(int id, string email, string[] roles);
+        string GenerateToken(IEnumerable<Claim> claims);
     }
 }
