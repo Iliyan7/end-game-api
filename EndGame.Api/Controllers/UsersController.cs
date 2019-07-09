@@ -2,6 +2,7 @@
 using EndGame.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace EndGame.Api.Controllers
 {
@@ -18,11 +19,11 @@ namespace EndGame.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("subscribe")]
-        public ActionResult Subscribe(SubscribeReqModel model)
+        public async Task<ActionResult> Subscribe(SubscribeReqModel model)
         {
-            _usersService.AddToSubscribersAsync(model.Email);
+            await _usersService.AddToSubscribersAsync(model.Email);
 
-            return Accepted();
+            return Ok();
         }
     }
 }
