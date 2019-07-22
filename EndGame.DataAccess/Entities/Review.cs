@@ -7,7 +7,6 @@ namespace EndGame.DataAccess.Entities
     {
         public int Id { get; set; }
 
-       
         [Required]
         public string Gameplay { get; set; }
 
@@ -28,6 +27,7 @@ namespace EndGame.DataAccess.Entities
 
         public DateTimeOffset CreationDate { get; set; } = DateTimeOffset.UtcNow;
 
+        public int ReviewedGameId { get; set; }
         public Game ReviewedGame { get; set; }
 
         public int AuthorId { get; set; }

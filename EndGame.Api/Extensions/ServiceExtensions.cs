@@ -3,6 +3,8 @@ using EndGame.Api.TokenProviders.Contracts;
 using EndGame.DataAccess;
 using EndGame.Services;
 using EndGame.Services.Contracts;
+using EndGame.Storage;
+using EndGame.Storage.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -63,6 +65,8 @@ namespace EndGame.Api.Extensions
                 .AddSingleton<ITokenProvider, JwtTokenProvider>()
                 .AddScoped<IUsersService, UsersService>()
                 .AddScoped<IGamesService, GamesService>()
+
+                .AddScoped<LocalStorage>()
                 ;
         }
 

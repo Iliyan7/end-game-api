@@ -27,7 +27,7 @@ namespace EndGame.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<object>> GetById(int id)
         {
@@ -41,9 +41,9 @@ namespace EndGame.Api.Controllers
             return result.Data;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "IsAdmin")]
         [HttpPost]
-        public async Task<ActionResult<object>> Create(CreateGameReqModel model)
+        public async Task<ActionResult<object>> Create([FromForm]CreateGameReqModel model)
         {
             var result = await _gamesService.CreateAsync(model);
 
@@ -55,8 +55,8 @@ namespace EndGame.Api.Controllers
             return Ok(result.Data);
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [Authorize(Policy = "IsAdmin")]
+        [HttpPatch]
         public async Task<ActionResult> Update(int id, UpdateGameReqModel model)
         {
             var result = await _gamesService.UpdateAsync(id, model);

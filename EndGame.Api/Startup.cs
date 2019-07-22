@@ -1,4 +1,5 @@
 ﻿using EndGame.Api.Extensions;
+using EndGame.Constants;
 using EndGame.Shared.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -40,6 +41,11 @@ namespace EndGame.Api
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("IsAdmin", policy => policy.RequireClaim(EndGameClaimTypes.Role, "Admin"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -12,13 +12,15 @@ namespace EndGame.DataAccess
 
         public DbSet<Game> Games { get; set; }
 
-        public DbSet<Image> Images { get; set; }
-
         public DbSet<GameImage> GameImages { get; set; }
+
+        public DbSet<GameGenre> GameGenres { get; set; }
 
         public DbSet<GamePlatform> GamePlatforms { get; set; }
 
         public DbSet<Genre> Genres { get; set; }
+
+        public DbSet<Platform> Platforms { get; set; }
 
         public DbSet<Review> Reviews { get; set; }
 
@@ -44,9 +46,6 @@ namespace EndGame.DataAccess
 
             modelBuilder.Entity<GameGenre>()
                .HasKey(gg => new { gg.GameId, gg.GenreId });
-
-            modelBuilder.Entity<GameImage>()
-                .HasKey(gi => new { gi.GameId, gi.ImageId });
 
             modelBuilder.Entity<GamePlatform>()
                .HasKey(gp => new { gp.GameId, gp.PlatformId });

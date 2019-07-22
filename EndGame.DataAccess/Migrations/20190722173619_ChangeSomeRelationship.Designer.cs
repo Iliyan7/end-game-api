@@ -4,14 +4,16 @@ using EndGame.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EndGame.DataAccess.Migrations
 {
     [DbContext(typeof(EndGameContext))]
-    partial class EndGameContextModelSnapshot : ModelSnapshot
+    [Migration("20190722173619_ChangeSomeRelationship")]
+    partial class ChangeSomeRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

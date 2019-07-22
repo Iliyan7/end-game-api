@@ -56,5 +56,15 @@ namespace EndGame.Services
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize);
         }
+
+        protected void UpdateEntry<T>(T entityToUpdate, string[] filledPropertiesToUpdate)
+        {
+            _db.Attach(entityToUpdate);
+
+            foreach (var property in filledPropertiesToUpdate)
+            {
+                _db.Entry(entityToUpdate).Property(property).IsModified = true;
+            }
+        }
     }
 }

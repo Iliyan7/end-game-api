@@ -2,6 +2,6 @@
 {
     public static class Pagination
     {
-        public const int DefaultPageSize = 12;
+        public const int DefaultPageSize = 9;
     }
 }

@@ -17,6 +17,11 @@
     <ProjectReference Include="..\EndGame.Models\EndGame.Models.csproj" />
     <ProjectReference Include="..\EndGame.Services\EndGame.Services.csproj" />
     <ProjectReference Include="..\EndGame.Shared\EndGame.Shared.csproj" />
+    <ProjectReference Include="..\EndGame.Storage\EndGame.Storage.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

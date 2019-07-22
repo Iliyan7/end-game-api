@@ -1,4 +1,4 @@
-﻿using System;
+﻿using EndGame.DataAccess.Entities;
 
 namespace EndGame.Models.Games
 {
@@ -6,9 +6,13 @@ namespace EndGame.Models.Games
     {
         public string Title { get; set; }
 
-        public object ToEntity(int id)
+        public Game ToEntity(int id)
         {
-            throw new NotImplementedException();
+            return new Game()
+            {
+                Id = id,
+                Title = this.Title,
+            };
         }
     }
 }

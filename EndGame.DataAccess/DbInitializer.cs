@@ -1,6 +1,5 @@
 ﻿using CryptoHelper;
 using EndGame.DataAccess.Entities;
-using System;
 using System.Linq;
 
 namespace EndGame.DataAccess
@@ -15,23 +14,28 @@ namespace EndGame.DataAccess
         public static void Initialize(EndGameContext context)
         {
             SeedRoles(context);
-
             SeedAdminUser(context);
         }
 
         private static void SeedRoles(EndGameContext context)
         {
+            bool saveChanges = false;
+
             foreach (var role in defaultRoles)
             {
                 var roleExists = context.Roles.Any(r => r.Name.Equals(role));
 
                 if (!roleExists)
                 {
+                    saveChanges = true;
                     context.Roles.Add(new Role { Name = role });
                 }
             }
 
-            context.SaveChanges();
+            if (saveChanges)
+            {
+                context.SaveChanges();
+            }
         }
 
         private static void SeedAdminUser(EndGameContext context)

@@ -40,7 +40,10 @@ namespace EndGame.Services
 
         public async Task<ServiceResult<ClaimsIdentity>> PasswordSignInAsync(string email, string password)
         {
-            var user = await Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await Users
+                .Include(u => u.Roles)
+                .ThenInclude(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
             {
