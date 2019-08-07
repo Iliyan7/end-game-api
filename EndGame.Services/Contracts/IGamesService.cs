@@ -10,7 +10,7 @@ namespace EndGame.Services.Contracts
     {
         Task<Pagination<GameResModel>> GetAllAsync(string searchTerm, int pageIndex = 1);
 
-        Task<ServiceResult<GameResModel>> GetByIdAsync(int id);
+        Task<ServiceResult<GameDetailsResModel>> GetByIdAsync(int id);
 
         Task<ServiceResult<Game>> CreateAsync(CreateGameReqModel model);
 

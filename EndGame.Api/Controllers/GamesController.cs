@@ -18,18 +18,18 @@ namespace EndGame.Api.Controllers
             _gamesService = gamesService;
         }
 
-        [Authorize]
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<Pagination<object>>> GetAll(string searchTerm, int pageIndex = 1)
+        public async Task<ActionResult<Pagination<GameResModel>>> GetAll(string searchTerm, int pageIndex = 1)
         {
             var result = await _gamesService.GetAllAsync(searchTerm, pageIndex);
 
             return Ok(result);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<object>> GetById(int id)
+        public async Task<ActionResult<GameDetailsResModel>> GetById(int id)
         {
             var result = await _gamesService.GetByIdAsync(id);
 

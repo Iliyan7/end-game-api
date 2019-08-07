@@ -2,6 +2,6 @@
 {
     public interface ILocalStorage
     {
-        string GetLocalPath(string key);
+        string GetStaticPath(string key);
     }
 }

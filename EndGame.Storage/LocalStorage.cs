@@ -1,5 +1,6 @@
 ﻿using EndGame.Storage.Contracts;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -7,16 +8,18 @@ namespace EndGame.Storage
 {
     public class LocalStorage : IStorageProvider, ILocalStorage
     {
-        //private readonly IHostingEnvironment _env;
         private readonly string storageFolder;
+        //private readonly IHostingEnvironment _env;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public LocalStorage(IHostingEnvironment env)
+        public LocalStorage(IHostingEnvironment env, IHttpContextAccessor httpContextAccessor)
         {
             //_env = env;
+            _httpContextAccessor = httpContextAccessor;
             storageFolder = Path.Combine(env.WebRootPath, "images", "games");
         }
 
-        public string GetLocalPath(string key) => Path.Combine(storageFolder, key);
+        public string GetStaticPath(string key) => Path.Combine(_httpContextAccessor.HttpContext.Request.Host.Value, "images", "games", key);
 
         public async Task<Stream> DownloadAsync(string key)
         {

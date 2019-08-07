@@ -44,10 +44,7 @@ namespace EndGame.Services
                 {
                     Id = g.Id,
                     Title = g.Title,
-                    Images = g.Images.Select(i => new ImageInfo
-                    {
-                        Path = _storageProvider.GetLocalPath(i.Path)
-                    })
+                    ThumbnailUrl = _storageProvider.GetStaticPath(g.Images.First().Path)
                 })
                 .ToListAsync();
 
@@ -59,17 +56,14 @@ namespace EndGame.Services
             };
         }
 
-        public async Task<ServiceResult<GameResModel>> GetByIdAsync(int id)
+        public async Task<ServiceResult<GameDetailsResModel>> GetByIdAsync(int id)
         {
             var game = await Games
-                .Select(g => new GameResModel
+                .Select(g => new GameDetailsResModel
                 {
                     Id = g.Id,
                     Title = g.Title,
-                    Images = g.Images.Select(i => new ImageInfo
-                    {
-                        Path = _storageProvider.GetLocalPath(i.Path)
-                    }),
+                    Images = g.Images.Select(i => _storageProvider.GetStaticPath(i.Path)),
                     Genres = g.Genres.Select(gi => new GenreInfo
                     {
                         Id = gi.Genre.Id,
@@ -85,10 +79,10 @@ namespace EndGame.Services
 
             if (game == null)
             {
-                return ServiceResult<GameResModel>.Failed(NotFound.StatusCode, new ResultError(NotFound.NoSuchGame));
+                return ServiceResult<GameDetailsResModel>.Failed(NotFound.StatusCode, new ResultError(NotFound.NoSuchGame));
             }
 
-            return ServiceResult<GameResModel>.Success(game);
+            return ServiceResult<GameDetailsResModel>.Success(game);
         }
 
         public async Task<ServiceResult<Game>> CreateAsync(CreateGameReqModel model)
@@ -109,7 +103,7 @@ namespace EndGame.Services
             {
                 if (image.Length > 0)
                 {
-                    var keyName = GenerateUniqueName(Path.GetExtension(image.FileName));
+                    var keyName = GenerateUniqueFilename(Path.GetExtension(image.FileName));
                     await _storageProvider.UploadAsync(image.OpenReadStream(), keyName);
 
                     game.Images.Add(new GameImage()
@@ -143,10 +137,6 @@ namespace EndGame.Services
 
             return ServiceResult<Game>.Success(game);
         }
-
-        private string GenerateUniqueName(string ext) =>
-            "Image" + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + ext;
-
 
         public async Task<ServiceResult> UpdateAsync(int id, UpdateGameReqModel model)
         {
@@ -189,6 +179,5 @@ namespace EndGame.Services
 
             return true;
         }
-
     }
 }

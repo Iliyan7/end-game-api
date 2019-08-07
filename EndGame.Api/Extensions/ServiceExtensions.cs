@@ -1,5 +1,6 @@
 ﻿using EndGame.Api.TokenProviders;
 using EndGame.Api.TokenProviders.Contracts;
+using EndGame.Constants;
 using EndGame.DataAccess;
 using EndGame.Services;
 using EndGame.Services.Contracts;
@@ -12,7 +13,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace EndGame.Api.Extensions
 {

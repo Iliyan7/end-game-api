@@ -50,6 +50,9 @@ namespace EndGame.Services
             return Nullable.GetUnderlyingType(type) != null;
         }
 
+        protected string GenerateUniqueFilename(string ext) =>
+           "Image" + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_" + ext;
+
         protected IQueryable<T> CreatePaginatedResult<T>(IQueryable<T> query, int pageIndex, int pageSize)
         {
             return query

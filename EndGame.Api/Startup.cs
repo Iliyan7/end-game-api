@@ -34,12 +34,13 @@ namespace EndGame.Api
 
             services.AddJwtBearerAuth(Configuration);
 
+            services.AddHttpContextAccessor();
             services.AddCustomServices();
 
             services.AddMvc(options =>
             {
-                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
+                //var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                //options.Filters.Add(new AuthorizeFilter(policy));
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddAuthorization(options =>
